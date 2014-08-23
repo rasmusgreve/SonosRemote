@@ -13,8 +13,11 @@ public class CommandInterface {
 	
 	public static void main(String[] args) throws IOException
 	{
-		CommandInterface ci = new CommandInterface();
-		ci.start();
+		if (args.length == 0)
+		{
+			CommandInterface ci = new CommandInterface();
+			ci.start();
+		}
 	}
 	
 	private boolean validIP(String ip)

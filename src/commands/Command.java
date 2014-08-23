@@ -22,6 +22,7 @@ public abstract class Command {
 		Commands.add(new PauseCommand());
 		Commands.add(new NextCommand());
 		Commands.add(new PrevCommand());
+		Commands.add(new TrackCommand());
 		Commands.add(new QuitCommand());
 	}
 	
@@ -55,11 +56,21 @@ public abstract class Command {
 		return "urn:schemas-upnp-org:service:"+service_type+":"+version+"#"+action;
 	}
 	
-	protected String get(String action, String service_type, String version, String argument, String tag)
+	protected String get(String action, String service_type, String version, String argument)
 	{
 		String resp = communicate(action, service_type, version, argument);
-		resp = resp.split("<"+tag+">")[1].split("</"+tag+">")[0];
 		return resp;
+	}
+	
+	protected String extract(String raw, String tag)
+	{
+		try{
+			return raw.split("<"+tag+">")[1].split("</"+tag+">")[0];
+		}
+		catch (Exception e)
+		{
+			return "";
+		}
 	}
 	
 	protected void send(String action, String service_type, String version, String argument)

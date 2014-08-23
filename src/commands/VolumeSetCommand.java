@@ -25,7 +25,7 @@ public class VolumeSetCommand extends Command {
 			String version = "1";
 			String arguments = "<InstanceID>0</InstanceID><Channel>Master</Channel>";
 			
-			System.out.println(get(action, service_type, version, arguments, "CurrentVolume"));
+			System.out.println(extract(get(action, service_type, version, arguments), "CurrentVolume"));
 		}
 		else
 		{

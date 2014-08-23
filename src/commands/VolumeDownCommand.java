@@ -20,7 +20,7 @@ public class VolumeDownCommand extends Command {
 		String version = "1";
 		String arguments = "<InstanceID>0</InstanceID><Channel>Master</Channel>";
 		
-		volume = Integer.parseInt(get(action, service_type, version, arguments, "CurrentVolume"));
+		volume = Integer.parseInt(extract(get(action, service_type, version, arguments), "CurrentVolume"));
 		volume = Math.max(0, volume - 5);
 		
 		action = "SetVolume";

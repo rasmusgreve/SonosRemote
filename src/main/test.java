@@ -58,15 +58,15 @@ public class test {
 		String version = "1";
 		String arguments = "<InstanceID>0</InstanceID>";*/
 		
-		/*String action = "GetPositionInfo";
+		String action = "GetPositionInfo";
 		String service_type = "AVTransport";
 		String version = "1";
-		String arguments = "<InstanceID>0</InstanceID>";*/
+		String arguments = "<InstanceID>0</InstanceID>";
 		
-		String action = "GetVolume";
+		/*String action = "GetVolume";
 		String service_type = "RenderingControl";
 		String version = "1";
-		String arguments = "<InstanceID>0</InstanceID><Channel>Master</Channel>";
+		String arguments = "<InstanceID>0</InstanceID><Channel>Master</Channel>";*/
 		
 		String soap = soap(action, service_type, version, arguments);
 		String soapAction = soapAction(action, service_type, version);
