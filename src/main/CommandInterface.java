@@ -1,5 +1,9 @@
 package main;
 import java.io.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.HashMap;
 
 import commands.*;
@@ -38,17 +42,45 @@ public class CommandInterface {
 		return true;
 	}
 	
+	private String discover() throws IOException
+	{
+		DatagramSocket ds = new DatagramSocket();
+		ds.setBroadcast(true);
+		
+		String data = "M-SEARCH * HTTP/1.1\r\n"
+        				+ "HOST: 239.255.255.250:1900\r\n"
+        				+ "MAN: \"ssdp:discover\"\r\n"
+        				+ "MX: 1\r\n"
+        				+ "ST: urn:schemas-upnp-org:device:ZonePlayer:1\r\n";
+		
+		
+		DatagramPacket dp = new DatagramPacket(data.getBytes(), data.length());
+		dp.setAddress(InetAddress.getByName("255.255.255.255"));
+		dp.setPort(1900);
+		
+		ds.send(dp);
+		
+		DatagramPacket inp = new DatagramPacket(new byte[1024], 1024);
+		ds.receive(inp);
+		ds.close();
+
+		System.out.println("Connected to: " + inp.getAddress().toString().replace("/", ""));
+		
+		return inp.getAddress().toString().replace("/","");
+	}
+	
+	
 	public void start() throws IOException
 	{
 		System.out.println("Sonos controller v. 0.1");
 		//Todo fetch ip etc.		
-		String ip = "";
-		do
+		String ip = discover();
+		while(!validIP(ip))
 		{
 			System.out.println("Enter the IP of your Sonos device:");
 			ip = br.readLine();
 		}
-		while(!validIP(ip));
+		
 		Command.SetIP(ip);
 		
 		registerCommands();
