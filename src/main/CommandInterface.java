@@ -33,7 +33,8 @@ public class CommandInterface {
 			for (String s : parts)
 			{
 				if (Integer.parseInt(s) < 0 || Integer.parseInt(s) > 255) return false;
-			}
+			}	
+			
 		}
 		catch (Exception e)
 		{
@@ -60,10 +61,19 @@ public class CommandInterface {
 		
 		ds.send(dp);
 		
-		DatagramPacket inp = new DatagramPacket(new byte[1024], 1024);
-		ds.receive(inp);
-		ds.close();
-
+		DatagramPacket inp = null;
+		boolean a = true;
+		
+		//while (a){
+			inp = new DatagramPacket(new byte[2048], 2048);
+			ds.receive(inp);
+			ds.close();
+	
+			String d = new String(inp.getData());
+			System.out.println(d);
+			System.out.println("------------------------------------");
+		//}
+		
 		System.out.println("Connected to: " + inp.getAddress().toString().replace("/", ""));
 		
 		return inp.getAddress().toString().replace("/","");

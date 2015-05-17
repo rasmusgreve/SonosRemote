@@ -23,6 +23,7 @@ public abstract class Command {
 		Commands.add(new NextCommand());
 		Commands.add(new PrevCommand());
 		Commands.add(new TrackCommand());
+		Commands.add(new PlayURICommand());
 		Commands.add(new QuitCommand());
 	}
 	
@@ -37,18 +38,39 @@ public abstract class Command {
 	}
 	
 	
-	private static String soap(String action, String service_type, String version, String arguments)
+	public static String soap(String action, String service_type, String version, String arguments)
 	{
-		return "<?xml version=\"1.0\"?>"
-		        + "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\""
-		        + " s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
-		          +   "<s:Body>"
-		            +    "<u:"+action+" xmlns:u=\"urn:schemas-upnp-org:service:"
-		             +       service_type+":"+version+"\">"
-		              +      arguments
-		              +  "</u:"+action+">"
-		           + "</s:Body>"
-		        +"</s:Envelope>";
+		return soap(action, service_type, version, arguments, false);
+	}
+	
+	public static String soap(String action, String service_type, String version, String arguments, boolean sonosScheme)
+	{
+		if (sonosScheme)
+		{
+			return "<?xml version=\"1.0\"?>"
+			        + "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\""
+			        + " s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+			          +   "<s:Body>"
+			            +    "<u:"+action+" xmlns:u=\"urn:schemas-sonos-com:service:"
+			             +       service_type+":"+version+"\">"
+			              +      arguments
+			              +  "</u:"+action+">"
+			           + "</s:Body>"
+			        +"</s:Envelope>";
+		}
+		else
+		{
+			return "<?xml version=\"1.0\"?>"
+			        + "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\""
+			        + " s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+			          +   "<s:Body>"
+			            +    "<u:"+action+" xmlns:u=\"urn:schemas-upnp-org:service:"
+			             +       service_type+":"+version+"\">"
+			              +      arguments
+			              +  "</u:"+action+">"
+			           + "</s:Body>"
+			        +"</s:Envelope>";
+		}
 	}
 	
 	private static String soapAction(String action, String service_type, String version)
@@ -99,6 +121,7 @@ public abstract class Command {
 			con.setRequestProperty("Connection", "Close");
 			con.setRequestProperty("SOAPACTION", soapAction);
 	 
+			System.out.println("Post parameters : " + soap);
 	
 			// Send post request
 			con.setDoOutput(true);
@@ -107,10 +130,10 @@ public abstract class Command {
 			wr.flush();
 			wr.close();
 	 
-			//int responseCode = con.getResponseCode();
-			//System.out.println("\nSending 'POST' request to URL : " + url);
-			//System.out.println("Post parameters : " + soap);
-			//System.out.println("Response Code : " + responseCode);
+			int responseCode = con.getResponseCode();
+			System.out.println("\nSending 'POST' request to URL : " + url);
+			System.out.println("Post parameters : " + soap);
+			System.out.println("Response Code : " + responseCode);
 	 
 			BufferedReader in = new BufferedReader(
 			        new InputStreamReader(con.getInputStream()));

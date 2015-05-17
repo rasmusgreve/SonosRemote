@@ -2,6 +2,7 @@ package commands;
 
 import java.io.IOException;
 
+
 public class TrackCommand extends Command {
 
 	@Override
@@ -19,7 +20,7 @@ public class TrackCommand extends Command {
 		String raw = get(action, service_type, version, arguments);
 		String meta = extract(raw, "TrackMetaData");
 		meta = meta.replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&amp;", "&").replace("&amp;", "&");
-		System.out.println(meta);
+		//System.out.println(meta);
 		String title = extract(meta, "dc:title");
 		String creator = extract(meta, "dc:creator");
 		String album = extract(meta, "upnp:album");
@@ -29,6 +30,7 @@ public class TrackCommand extends Command {
 		System.out.println(creator);
 		System.out.println(album);
 		System.out.println(content);
+		
 	}
 
 	@Override

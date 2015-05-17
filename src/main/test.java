@@ -10,18 +10,40 @@ import java.net.URL;
 
 public class test {
 
+	
 	public static String soap(String action, String service_type, String version, String arguments)
 	{
-		return "<?xml version=\"1.0\"?>"
-		        + "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\""
-		        + " s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
-		          +   "<s:Body>"
-		            +    "<u:"+action+" xmlns:u=\"urn:schemas-upnp-org:service:"
-		             +       service_type+":"+version+"\">"
-		              +      arguments
-		              +  "</u:"+action+">"
-		           + "</s:Body>"
-		        +"</s:Envelope>";
+		return soap(action, service_type, version, arguments, false);
+	}
+	
+	public static String soap(String action, String service_type, String version, String arguments, boolean sonosScheme)
+	{
+		if (sonosScheme)
+		{
+			return "<?xml version=\"1.0\"?>"
+			        + "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\""
+			        + " s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+			          +   "<s:Body>"
+			            +    "<u:"+action+" xmlns:u=\"urn:schemas-sonos-com:service:"
+			             +       service_type+":"+version+"\">"
+			              +      arguments
+			              +  "</u:"+action+">"
+			           + "</s:Body>"
+			        +"</s:Envelope>";
+		}
+		else
+		{
+			return "<?xml version=\"1.0\"?>"
+			        + "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\""
+			        + " s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+			          +   "<s:Body>"
+			            +    "<u:"+action+" xmlns:u=\"urn:schemas-upnp-org:service:"
+			             +       service_type+":"+version+"\">"
+			              +      arguments
+			              +  "</u:"+action+">"
+			           + "</s:Body>"
+			        +"</s:Envelope>";
+		}
 	}
 	
 	public static String soapAction(String action, String service_type, String version)
@@ -67,6 +89,13 @@ public class test {
 		String service_type = "RenderingControl";
 		String version = "1";
 		String arguments = "<InstanceID>0</InstanceID><Channel>Master</Channel>";*/
+		
+		/*String action = "RemoveAllTracks";
+		String service_type = "Queue";
+		String version = "1";
+		String arguments = "<QueueID>0</QueueID><UpdateID>0</UpdateID>";
+		//sonos scheme = true!
+		*/
 		
 		String soap = soap(action, service_type, version, arguments);
 		String soapAction = soapAction(action, service_type, version);
