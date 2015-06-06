@@ -2,48 +2,60 @@ package commands;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
-public abstract class Command {
+public abstract class Command<ResultType> {
 	
-	public static ArrayList<Command> Commands;
-	static
-	{
-		Commands = new ArrayList<Command>();
-		Commands.add(new HelpCommand());
-		Commands.add(new VolumeDownCommand());
-		Commands.add(new VolumeSetCommand());
-		Commands.add(new VolumeUpCommand());
-		Commands.add(new PlayCommand());
-		Commands.add(new PauseCommand());
-		Commands.add(new NextCommand());
-		Commands.add(new PrevCommand());
-		Commands.add(new TrackCommand());
-		Commands.add(new PlayURICommand());
-		Commands.add(new QuitCommand());
+	private CommandResultListener<ResultType> resultListener;
+	private final String ip;
+	
+	public Command(String destinationAddress){
+		this.ip = destinationAddress;
 	}
 	
-	public abstract String[] commandStrings();
-	public abstract void execute(String cmd) throws IOException;
-	public abstract String help();
-	
-	private static String ip;
-	public static void SetIP(String ip)
-	{
-		Command.ip = ip;
+	public void setResultListener(CommandResultListener<ResultType> listener){
+		this.resultListener = listener;
 	}
 	
+	private void notifyResult(ResultType result){
+		if (resultListener != null)
+			resultListener.onResult(result);
+	}
 	
-	public static String soap(String action, String service_type, String version, String arguments)
+	protected abstract ResultType sendCommand();
+	
+	public void execute(){
+		Runnable r = new Runnable() {
+			
+			@Override
+			public void run() {
+				ResultType result = sendCommand();
+				notifyResult(result);
+			}
+		};
+		new Thread(r).start();
+	}
+	
+	public ResultType executeBlocking(){
+		return sendCommand();
+	}
+	
+	public void execute(CommandResultListener<ResultType> listener){
+		setResultListener(listener);
+		execute();
+	}
+	
+	////////////////////////////////////
+	//Helper methods for child commands
+	
+	private static String soap(String action, String service_type, String version, String arguments)
 	{
 		return soap(action, service_type, version, arguments, false);
 	}
 	
-	public static String soap(String action, String service_type, String version, String arguments, boolean sonosScheme)
+	private static String soap(String action, String service_type, String version, String arguments, boolean sonosScheme)
 	{
 		if (sonosScheme)
 		{
@@ -84,7 +96,7 @@ public abstract class Command {
 		return resp;
 	}
 	
-	protected String extract(String raw, String tag)
+	protected static String extract(String raw, String tag)
 	{
 		try{
 			return raw.split("<"+tag+">")[1].split("</"+tag+">")[0];
@@ -156,4 +168,9 @@ public abstract class Command {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	
+	
+	
+	
 }

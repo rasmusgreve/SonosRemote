@@ -1,4 +1,4 @@
-package commands;
+package old_commands;
 
 public class HelpCommand extends Command {
 	

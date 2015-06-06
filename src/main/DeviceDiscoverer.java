@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import commands.PlayCommand;
+
 public class DeviceDiscoverer {
 
 	private static final String discoveryData = "M-SEARCH * HTTP/1.1\r\n"
@@ -100,16 +102,29 @@ public class DeviceDiscoverer {
 			
 			@Override
 			public void newDevice(SonosDevice device) {
-				System.out.println("Found sonos @ " + device.getIp());
-				System.out.println("\t Room: " + device.getRoomName());
-				System.out.println("\t Type: " + device.getPlayerType());
+				System.out.println("Found " + device.getPlayerType() + " @ " + device.getIp() + " - " + device.getRoomName());
 			}
 			
 			@Override
 			public void discoveryComplete(List<SonosDevice> devices) {
 				System.out.println("Discovery done. Found " + devices.size() + " devices");
+
+				SonosDevice stue = devices.stream().filter(d -> d.getRoomName().equals("Stue")).findFirst().get();
+				SonosDevice altan = devices.stream().filter(d -> d.getRoomName().equals("Altan")).findFirst().get();
+				SonosDevice soveværelse = devices.stream().filter(d -> d.getRoomName().equals("Soveværelse")).findFirst().get();
+				SonosDevice børneværelse = devices.stream().filter(d -> d.getRoomName().equals("Børneværelse")).findFirst().get();
+				SonosDevice køkken = devices.stream().filter(d -> d.getRoomName().equals("Køkken")).findFirst().get();
+				
+				//System.out.println("Joining them");
+				//stue.join(køkken);
+				//System.out.println("Done?");
+				
+				//System.out.println("Unjoining stue");
+				//stue.unjoin();
+				stue.playUri("http://www.dr.dk/mu/MediaRedirector/WithFileExtension/mads-monopolet-uge-15-mungo-park-kolding.mp3?highestBitrate=True&amp;podcastDownload=True", "Mads og monopolet");
 			}
 		});
+		
 	}
 	
 }

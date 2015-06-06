@@ -1,71 +1,33 @@
 package commands;
 
-import java.io.IOException;
+public class PlayURICommand extends Command<Void> {
 
-public class PlayURICommand extends Command {
-
-	@Override
-	public String[] commandStrings() {
-		return new String[]{"url", "uri"};
+	final String uri, title;
+	
+	public PlayURICommand(String destinationAddress, String uri, String title) {
+		super(destinationAddress);
+		this.uri = uri;
+		this.title = title;
 	}
 
 	@Override
-	public void execute(String url) throws IOException {
-		url = "http://www.dr.dk/mu/MediaRedirector/WithFileExtension/mads-monopolet-uge-15-mungo-park-kolding.mp3?highestBitrate=True&amp;podcastDownload=True";
+	protected Void sendCommand() {
+		//String url = "http://www.dr.dk/mu/MediaRedirector/WithFileExtension/mads-monopolet-uge-15-mungo-park-kolding.mp3?highestBitrate=True&amp;podcastDownload=True";
+		//String url = "http://www.tonycuffe.com/mp3/saewill.mp3";
 		
-		String title = "Custom URL";
-		String meta = "<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements"+
-		        "/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" "+
-		        "xmlns:r=\"urn:schemas-rinconnetworks-com:metadata-1-0/\" "+
-		        "xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">"+
-		        "<item id=\"R:0/0/0\" parentID=\"R:0/0\" restricted=\"true\">"+
-		        "<dc:title>"+title+"</dc:title><upnp:class>"+
-		        "object.item.audioItem.audioBroadcast</upnp:class><desc "+
-		        "id=\"cdudn\" nameSpace=\"urn:schemas-rinconnetworks-com:"+
-		        "metadata-1-0/\">"+"SA_RINCON65031_"+"</desc></item></DIDL-Lite>";
-				
+		//String title = "CustomURL";
+
+		String meta = "&lt;DIDL-Lite xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:upnp=&quot;urn:schemas-upnp-org:metadata-1-0/upnp/&quot; xmlns:r=&quot;urn:schemas-rinconnetworks-com:metadata-1-0/&quot; xmlns=&quot;urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/&quot;&gt;&lt;item id=&quot;R:0/0/0&quot; parentID=&quot;R:0/0&quot; restricted=&quot;true&quot;&gt;&lt;dc:title&gt;"+title+"&lt;/dc:title&gt;&lt;upnp:class&gt;object.item.audioItem.audioBroadcast&lt;/upnp:class&gt;&lt;desc id=&quot;cdudn&quot; nameSpace=&quot;urn:schemas-rinconnetworks-com:metadata-1-0/&quot;&gt;SA_RINCON65031_&lt;/desc&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;";
 		
+		//meta = "";
 		String action = "SetAVTransportURI";
 		String service_type = "AVTransport";
 		String version = "1";
-		String arguments = "<InstanceID>0</InstanceID><CurrentURI>"+url+"</CurrentURI><CurrentURIMetaData>"+meta+"</CurrentURIMetaData>";
+		String arguments = "<InstanceID>0</InstanceID><CurrentURI>"+uri+"</CurrentURI><CurrentURIMetaData>"+meta+"</CurrentURIMetaData>";
 		
-		send(action, service_type, version, arguments);	
-	}
-
-	@Override
-	public String help() {
-		return "Start playing a given url (provide the url to play)";
+		send(action, service_type, version, arguments);
+		
+		return null;
 	}
 
 }
-
-
-/*
-
-"""
-if meta == '' and title != '':
-    meta_template = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements'\
-        '/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" '\
-        'xmlns:r="urn:schemas-rinconnetworks-com:metadata-1-0/" '\
-        'xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">'\
-        '<item id="R:0/0/0" parentID="R:0/0" restricted="true">'\
-        '<dc:title>{title}</dc:title><upnp:class>'\
-        'object.item.audioItem.audioBroadcast</upnp:class><desc '\
-        'id="cdudn" nameSpace="urn:schemas-rinconnetworks-com:'\
-        'metadata-1-0/">{service}</desc></item></DIDL-Lite>'
-    tunein_service = 'SA_RINCON65031_'
-    # Radio stations need to have at least a title to play
-    meta = meta_template.format(title=title, service=tunein_service)
-
-self.avTransport.SetAVTransportURI([
-    ('InstanceID', 0),
-    ('CurrentURI', uri),
-    ('CurrentURIMetaData', meta)
-])
-# The track is enqueued, now play it if needed
-if start:
-    return self.play()
-return False
-
-*/

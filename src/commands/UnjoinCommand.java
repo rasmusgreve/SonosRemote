@@ -1,14 +1,15 @@
 package commands;
 
-public class PauseCommand extends Command<Void> {
 
-	public PauseCommand(String destinationAddress) {
+public class UnjoinCommand extends Command<Void> {
+
+	public UnjoinCommand(String destinationAddress) {
 		super(destinationAddress);
 	}
 
 	@Override
 	protected Void sendCommand() {
-		String action = "Pause";
+		String action = "BecomeCoordinatorOfStandaloneGroup";
 		String service_type = "AVTransport";
 		String version = "1";
 		String arguments = "<InstanceID>0</InstanceID><Speed>1</Speed>";

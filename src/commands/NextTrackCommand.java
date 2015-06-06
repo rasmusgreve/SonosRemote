@@ -1,21 +1,20 @@
 package commands;
 
-public class PauseCommand extends Command<Void> {
+public class NextTrackCommand extends Command<Void> {
 
-	public PauseCommand(String destinationAddress) {
+	public NextTrackCommand(String destinationAddress) {
 		super(destinationAddress);
 	}
 
 	@Override
 	protected Void sendCommand() {
-		String action = "Pause";
+		String action = "Next";
 		String service_type = "AVTransport";
 		String version = "1";
-		String arguments = "<InstanceID>0</InstanceID><Speed>1</Speed>";
-		
+		String arguments = "<InstanceID>0</InstanceID>";
+
 		send(action, service_type, version, arguments);
-		
 		return null;
 	}
-
+	
 }

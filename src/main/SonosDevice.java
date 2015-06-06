@@ -1,6 +1,5 @@
 package main;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,20 +11,33 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import commands.JoinCommand;
+import commands.NextTrackCommand;
+import commands.PauseCommand;
+import commands.PlayCommand;
+import commands.PlayURICommand;
+import commands.PrevTrackCommand;
+import commands.TrackInfo;
+import commands.TrackInfoCommand;
+import commands.UnjoinCommand;
+import commands.VolumeGetCommand;
+import commands.VolumeSetCommand;
+
 public class SonosDevice {
 
-	String ip;
-	String roomName;
-	String playerType;
+	private String ip;
+	private String roomName;
+	private String playerType;
+	private String uid;
 	
-	private SonosDevice(String ip, String roomName, String playerType) {
+	private SonosDevice(String ip, String roomName, String playerType, String uid) {
 		this.ip = ip;
 		this.roomName = roomName;
 		this.playerType = playerType;
+		this.uid = uid;
 	}
 	
-	
-	
+	//Meta
 	public String getIp() {
 		return ip;
 	}
@@ -37,9 +49,56 @@ public class SonosDevice {
 	public String getPlayerType() {
 		return playerType;
 	}
+	public String getUID(){
+		return uid;
+	}
+	
+	//Commands
+	
+	public void play(){
+		new PlayCommand(ip).execute();
+	}
+	
+	public void pause(){
+		new PauseCommand(ip).execute();
+	}
+	
+	public void nextTrack(){
+		new NextTrackCommand(ip).execute();
+	}
+	
+	public void prevTrack(){
+		new PrevTrackCommand(ip).execute();
+	}
+	
+	public TrackInfo getTrackInfoBlocking(){
+		return new TrackInfoCommand(ip).executeBlocking();
+	}
+	
+	public void setVolume(int volume){
+		new VolumeSetCommand(ip, volume).execute();
+	}
+	
+	public int getVolumeBlocking(){
+		return new VolumeGetCommand(ip).executeBlocking();
+	}
+	
+	public void join(SonosDevice master){
+		new JoinCommand(ip, master.getUID()).execute();
+	}
+	
+	public void unjoin(){
+		new UnjoinCommand(ip).execute();
+	}
+	
+	public void playUri(String uri, String title){
+		new PlayURICommand(ip, uri, title).execute();
+		play();
+	}
 	
 	
 	
+	//Builder
 	
 	public static SonosDevice build(String ip){
 		String deviceDescriptionURL = "http://"+ip+":1400/xml/device_description.xml";
@@ -67,21 +126,21 @@ public class SonosDevice {
 	
 	private static class SonosDeviceDescriptionHandler extends DefaultHandler{
 		
-		private String ip, roomName, playerType;
+		private String ip, roomName, playerType, uid;
 		
 		public SonosDeviceDescriptionHandler(String ip){
 			this.ip = ip;
 		}
 		
 		public SonosDevice getDevice(){
-			return new SonosDevice(ip, roomName, playerType);
+			return new SonosDevice(ip, roomName, playerType, uid);
 		}
 		
 		private StringBuilder stringBuilder;
 
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-			if (qName.equals("roomName") || qName.equals("displayName"))
+			if (qName.equals("roomName") || qName.equals("displayName") || qName.equals("UDN"))
 				stringBuilder = new StringBuilder();
 		}
 
@@ -91,6 +150,8 @@ public class SonosDevice {
 				roomName = stringBuilder.toString();
 			if (qName.equals("displayName"))
 				playerType = stringBuilder.toString();
+			if (qName.equals("UDN") && uid == null) //important to only catch first udn
+				uid = stringBuilder.toString().replace("uuid:", "").trim();
 		}
 
 		@Override
