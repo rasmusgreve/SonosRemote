@@ -1,4 +1,4 @@
-package commands;
+package model;
 
 public class TrackInfo {
 	private final String title, creator, album, content;

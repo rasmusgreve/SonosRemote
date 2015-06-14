@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import model.PlayPosition;
+import model.TrackInfo;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -17,7 +20,7 @@ import commands.PauseCommand;
 import commands.PlayCommand;
 import commands.PlayURICommand;
 import commands.PrevTrackCommand;
-import commands.TrackInfo;
+import commands.SeekCommand;
 import commands.TrackInfoCommand;
 import commands.UnjoinCommand;
 import commands.VolumeGetCommand;
@@ -94,6 +97,10 @@ public class SonosDevice {
 	public void playUri(String uri, String title){
 		new PlayURICommand(ip, uri, title).execute();
 		play();
+	}
+	
+	public void seek(PlayPosition position){
+		new SeekCommand(ip, position).execute();
 	}
 	
 	

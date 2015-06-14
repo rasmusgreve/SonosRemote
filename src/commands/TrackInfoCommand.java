@@ -1,5 +1,7 @@
 package commands;
 
+import model.TrackInfo;
+
 public class TrackInfoCommand extends Command<TrackInfo> {
 
 	public TrackInfoCommand(String destinationAddress) {

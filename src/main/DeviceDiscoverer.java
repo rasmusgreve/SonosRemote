@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import model.PlayPosition;
 import commands.PlayCommand;
 
 public class DeviceDiscoverer {
@@ -115,13 +116,16 @@ public class DeviceDiscoverer {
 				SonosDevice børneværelse = devices.stream().filter(d -> d.getRoomName().equals("Børneværelse")).findFirst().get();
 				SonosDevice køkken = devices.stream().filter(d -> d.getRoomName().equals("Køkken")).findFirst().get();
 				
+				
+				//køkken.playUri(uri, title);
 				//System.out.println("Joining them");
 				//stue.join(køkken);
 				//System.out.println("Done?");
 				
 				//System.out.println("Unjoining stue");
 				//stue.unjoin();
-				stue.playUri("http://www.dr.dk/mu/MediaRedirector/WithFileExtension/mads-monopolet-uge-15-mungo-park-kolding.mp3?highestBitrate=True&amp;podcastDownload=True", "Mads og monopolet");
+				køkken.seek(new PlayPosition(10, 0));
+				//køkken.playUri("http://www.dr.dk/mu/MediaRedirector/WithFileExtension/mads-monopolet-uge-15-mungo-park-kolding.mp3?highestBitrate=True&amp;podcastDownload=True", "Mads og monopolet");
 			}
 		});
 		

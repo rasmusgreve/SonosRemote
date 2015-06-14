@@ -125,15 +125,12 @@ public abstract class Command<ResultType> {
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 	 
-			//
 			con.setRequestMethod("POST");
 			con.setRequestProperty("User-Agent", "Linux UPnP/1.0 Sonos/26.1-77080 (WDCR:Microsoft Windows NT 6.2.9200.0)");
 			con.setRequestProperty("Content-Type", "text/xml; charset=\"utf-8\"");
 			con.setRequestProperty("Content-Length", soap.getBytes().length + "");
 			con.setRequestProperty("Connection", "Close");
 			con.setRequestProperty("SOAPACTION", soapAction);
-	 
-			System.out.println("Post parameters : " + soap);
 	
 			// Send post request
 			con.setDoOutput(true);
@@ -157,10 +154,9 @@ public abstract class Command<ResultType> {
 			}
 			in.close();
 	 
-			//print result
+			//result
 			String resp = response.toString();
 			resp = resp.split("<s:Body>")[1].split("</s:Body>")[0];
-			//resp = resp.replace("<", "\r\n<");
 			return resp;
 		}
 		catch (Exception e)
