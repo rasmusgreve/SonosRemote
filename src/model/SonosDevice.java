@@ -1,11 +1,8 @@
-package main;
+package model;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import model.PlayPosition;
-import model.TrackInfo;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -52,9 +49,6 @@ public class SonosDevice {
 	public String getPlayerType() {
 		return playerType;
 	}
-	public String getUID(){
-		return uid;
-	}
 	
 	//Commands
 	
@@ -87,7 +81,7 @@ public class SonosDevice {
 	}
 	
 	public void join(SonosDevice master){
-		new JoinCommand(ip, master.getUID()).execute();
+		new JoinCommand(ip, master.uid).execute();
 	}
 	
 	public void unjoin(){
@@ -104,9 +98,7 @@ public class SonosDevice {
 	}
 	
 	
-	
 	//Builder
-	
 	public static SonosDevice build(String ip){
 		String deviceDescriptionURL = "http://"+ip+":1400/xml/device_description.xml";
 		HttpURLConnection connection = null;
@@ -134,6 +126,7 @@ public class SonosDevice {
 	private static class SonosDeviceDescriptionHandler extends DefaultHandler{
 		
 		private String ip, roomName, playerType, uid;
+		private StringBuilder stringBuilder;
 		
 		public SonosDeviceDescriptionHandler(String ip){
 			this.ip = ip;
@@ -143,8 +136,6 @@ public class SonosDevice {
 			return new SonosDevice(ip, roomName, playerType, uid);
 		}
 		
-		private StringBuilder stringBuilder;
-
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			if (qName.equals("roomName") || qName.equals("displayName") || qName.equals("UDN"))
@@ -153,12 +144,9 @@ public class SonosDevice {
 
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if (qName.equals("roomName"))
-				roomName = stringBuilder.toString();
-			if (qName.equals("displayName"))
-				playerType = stringBuilder.toString();
-			if (qName.equals("UDN") && uid == null) //important to only catch first udn
-				uid = stringBuilder.toString().replace("uuid:", "").trim();
+			if (qName.equals("roomName"))			roomName = stringBuilder.toString();
+			if (qName.equals("displayName"))		playerType = stringBuilder.toString();
+			if (qName.equals("UDN") && uid == null) uid = stringBuilder.toString().replace("uuid:", "").trim();
 		}
 
 		@Override
