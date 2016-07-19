@@ -33,11 +33,15 @@ public class DeviceDiscoverer {
 	}
 	
 	protected static void notifyListenersNewDevice(SonosDevice device){
-		listeners.forEach(l->l.newDevice(device));
+		for (DiscoveryListener listener : listeners){
+			listener.newDevice(device);
+		}
 	}
 	
 	protected static void notifyListenersDiscoveryComplete(){
-		listeners.forEach(l->l.discoveryComplete(devices));
+		for (DiscoveryListener listener : listeners){
+			listener.discoveryComplete(devices);
+		}
 	}
 	
 	public static void discover(){
