@@ -104,6 +104,7 @@ public class SonosDevice {
 		HttpURLConnection connection = null;
 		try {
 			connection = (HttpURLConnection)new URL(deviceDescriptionURL).openConnection();
+			connection.setConnectTimeout(2_000);
 			connection.connect();
 			InputStream xmlStream = connection.getInputStream();
 			SonosDeviceDescriptionHandler handler = new SonosDeviceDescriptionHandler(ip);

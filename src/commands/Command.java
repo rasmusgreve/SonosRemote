@@ -8,6 +8,8 @@ import java.net.URL;
 
 public abstract class Command<ResultType> {
 	
+	private final boolean logEnabled = false;
+	
 	private CommandResultListener<ResultType> resultListener;
 	private final String ip;
 	
@@ -140,10 +142,12 @@ public abstract class Command<ResultType> {
 			wr.close();
 	 
 			int responseCode = con.getResponseCode();
-			System.out.println("\nSending 'POST' request to URL : " + url);
-			System.out.println("Post parameters : " + soap);
-			System.out.println("Response Code : " + responseCode);
-	 
+			if (logEnabled){
+				System.out.println("\nSending 'POST' request to URL : " + url);
+				System.out.println("Post parameters : " + soap);
+				System.out.println("Response Code : " + responseCode);
+			}
+			
 			BufferedReader in = new BufferedReader(
 			        new InputStreamReader(con.getInputStream()));
 			String inputLine;
