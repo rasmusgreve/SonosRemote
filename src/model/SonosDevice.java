@@ -123,6 +123,11 @@ public class SonosDevice {
 		}
 	}
 	
+	@Override
+	public String toString(){
+		return getRoomName();
+	}
+	
 	private static class SonosDeviceDescriptionHandler extends DefaultHandler{
 		
 		private String ip, roomName, playerType, uid;
